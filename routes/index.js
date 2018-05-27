@@ -92,34 +92,18 @@ router.get('/users/:userId(\\d+)/quizzes',
     sessionController.loginRequired,
     quizController.index);
 
-
-// Routes for the resource /quizzes
-router.get('/quizzes',
-	quizController.index);
-router.get('/quizzes/:quizId(\\d+)',
-	quizController.show);
-router.get('/quizzes/new',
-    sessionController.loginRequired,
-	quizController.new);
-router.post('/quizzes',
-    sessionController.loginRequired,
-	quizController.create);
-router.get('/quizzes/:quizId(\\d+)/edit',
-    sessionController.loginRequired,
-    quizController.adminOrAuthorRequired,
-	quizController.edit);
-router.put('/quizzes/:quizId(\\d+)',
-    sessionController.loginRequired,
-    quizController.adminOrAuthorRequired,
-	quizController.update);
-router.delete('/quizzes/:quizId(\\d+)',
-    sessionController.loginRequired,
-    quizController.adminOrAuthorRequired,
-	quizController.destroy);
+router.get('/quizzes',                     quizController.index);
+router.get('/quizzes/:quizId(\\d+)',       quizController.show);
+router.get('/quizzes/new',                 quizController.new);
+router.post('/quizzes',                    quizController.create);
+router.get('/quizzes/:quizId(\\d+)/edit',  quizController.edit);
+router.put('/quizzes/:quizId(\\d+)',       quizController.update);
+router.delete('/quizzes/:quizId(\\d+)',    quizController.destroy);
 
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
-
+router.get('/quizzes/randomplay',  quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomcheck);
 
 
 router.post('/quizzes/:quizId(\\d+)/tips',
