@@ -1,6 +1,19 @@
 const Sequelize = require("sequelize");
 const {models} = require("../models");
 
+//Permite solo a administradores y usuarios logueados
+exports.adminOrAuthorRequired = (req, res, next) => {
+
+    const isAdmin = !!req.session.user.isAdmin;
+    const isAuthor = req.tip.authorId === req.session.user.id;;
+
+    if (isAdmin || isAuthor) {
+        next();
+    } else {
+        console.log('Prohibited route: the logged in user is not an administrator nor a logged user');
+        res.send(403);
+    }
+};
 
 // Autoload the tip with id equals to :tipId
 exports.load = (req, res, next, tipId) => {
@@ -77,3 +90,35 @@ exports.destroy = (req, res, next) => {
     .catch(error => next(error));
 };
 
+// GET /quizzes/:quizId/tips/:tipId/edit
+exports.edit = (req, res, next) => {
+
+    const tip = req.tip;
+    const quiz = req.quiz;
+
+    res.render('tips/edit', {tip: tip, quiz: quiz});
+
+};
+
+// PUT /quizzes/:quizId/tips/:tipId
+exports.update = (req, res, next) => {
+
+    req.tip.text = req.body.text;
+    req.tip.accepted = false;
+
+    req.tip.save(["text","accepted"])
+        .then(tip => {
+            req.flash('success', 'Tip edited successfully.');
+            res.redirect("back");
+        })
+        .catch(Sequelize.ValidationError, error => {
+            req.flash('error', 'There are errors in the form:');
+            error.errors.forEach(({message}) => req.flash('error', message));
+            res.redirect("back");
+        })
+        .catch(error => {
+            req.flash('error', 'Error creating the new tip: ' + error.message);
+            next(error);
+        });
+
+};
